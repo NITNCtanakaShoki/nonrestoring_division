@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-int input(char* requested)
+int 入力(char* requested)
 {
     int number = 0;
     printf("%s: ", requested);
@@ -8,45 +8,43 @@ int input(char* requested)
     return number;
 }
 
-void printResult(int divided, int divide, int quotient, int remainder)
+void 答え出力(int 割られる数, int 割る数, int 商, int 余り)
 {
-    printf("%d ÷ %d = %d 余り %d", divided, divide, quotient, remainder);
+    printf("%d ÷ %d = %d 余り %d", 割られる数, 割る数, 商, 余り);
 }
 
-int trimmed8bit(int number)
+int ビット数を8bitに調整(int number)
 {
     return number & 0b11111111;
 }
 
-int isX1Sign(int x1x2)
+int x1は負の数か(int x1x2)
 {
     return ((x1x2 >> 7) & 0b1) == 1;
 }
 
-int leftShifted(int x1x2, int c)
+int X1とX2とCを左へ1bitシフト(int x1x2, int c)
 {
-    return trimmed8bit((x1x2 + c) << 1);
+    return ビット数を8bitに調整((x1x2 + c) << 1);
 }
 
-int x1MinusY(x1x2, y)
+int X1引くY(x1x2, y)
 {
-    return trimmed8bit(x1x2 - y);
+    return ビット数を8bitに調整(x1x2 - y);
 }
 
-int x1PlusY(x1x2, y)
+int X1足すY(x1x2, y)
 {
-    return trimmed8bit(x1x2 + y);
+    return ビット数を8bitに調整(x1x2 + y);
 }
-
-
 
 int main()
 {
-    int dividedNumber = input("割られる数");
-    int divideNumber = input("割る数");
+    int 割る数 = 入力("割られる数");
+    int 割られる数 = 入力("割る数");
 
-    int x1x2 = dividedNumber;
-    int y = divideNumber << 4;
+    int x1x2 = 割る数;
+    int y = 割られる数 << 4;
 
     int n = 4;
     int c = 0;
@@ -58,36 +56,36 @@ int main()
     }
 
     // X1 ← X1 - Y
-    x1x2 = x1MinusY(x1x2, y);
+    x1x2 = X1引くY(x1x2, y);
 
     // X1 < 0
-    if (!isX1Sign(x1x2)) {
+    if (!x1は負の数か(x1x2)) {
         puts("オーバーフロー");
         return 0;
     }
 
     // X1 X2 Cを左へ1bitシフト
-    x1x2 = leftShifted(x1x2, c);
+    x1x2 = X1とX2とCを左へ1bitシフト(x1x2, c);
 
     // X1 ← X1 + Y
-    x1x2 = x1PlusY(x1x2, y);
+    x1x2 = X1足すY(x1x2, y);
 
     // n ← n - 1
     n--;
 
     do {
         // X1 >= 0
-        if (isX1Sign(x1x2)) {
+        if (x1は負の数か(x1x2)) {
             // X1 < 0のとき
 
             // C ← 0
             c = 0;
 
             // X1 X2 Cを左へ1bitシフト
-            x1x2 = leftShifted(x1x2, c);
+            x1x2 = X1とX2とCを左へ1bitシフト(x1x2, c);
 
             // X1 ← X1 + Y
-            x1x2 = x1PlusY(x1x2, y);
+            x1x2 = X1足すY(x1x2, y);
         } else {
             // X1 >= 0のとき
 
@@ -95,21 +93,21 @@ int main()
             c = 1;
 
             // X1 X2 Cを左へ1bitシフト
-            x1x2 = leftShifted(x1x2, c);
+            x1x2 = X1とX2とCを左へ1bitシフト(x1x2, c);
 
             // X1 ← X1 - Y
-            x1x2 = x1MinusY(x1x2, y);
+            x1x2 = X1引くY(x1x2, y);
         }
         // n ← n - 1
         n--;
     } while (n != 0);
 
     // X1 >= 0
-    if (isX1Sign(x1x2)) {
+    if (x1は負の数か(x1x2)) {
         // c ← 0;
         c = 0;
         // X1 ← X1 + Y 回復処理
-        x1x2 = x1PlusY(x1x2, y);
+        x1x2 = X1足すY(x1x2, y);
     } else {
         // X1 >= 0のとき
 
@@ -118,10 +116,10 @@ int main()
     }
     x1x2 += c;
 
-    int quotient = x1x2 & 0b1111;
-    int remainder = (x1x2 >> 4) & 0b1111;
+    int 商 = x1x2 & 0b1111;
+    int 余り = (x1x2 >> 4) & 0b1111;
 
-    printResult(dividedNumber, divideNumber, quotient, remainder);
+    答え出力(割る数, 割られる数, 商, 余り);
 
     return 0;
 }
